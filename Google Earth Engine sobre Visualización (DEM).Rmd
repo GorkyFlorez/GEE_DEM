@@ -1,0 +1,82 @@
+---
+title: Google Earth Engine Entrenamiento sobre Visualización (DEM) de Hill Shade y Mapa de la pendiente
+author: "Gorky Florez Castillo"
+date: "8/8/2021"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: cerulean
+    source_code: embed
+---
+
+```{r setup, include=FALSE}
+# Instalar librerias ------------------------------------------------------------
+# install.packages("googledrive")
+# install.packages("rgee")
+library(googledrive)
+library(rgee)
+library(mapedit)
+library(tibble)
+library(sf)
+library(cptcity)
+library(tidyverse)
+library(sp)
+library(leaflet.extras2)
+library(magick)
+# remotes::install_github("r-earthengine/rgeeExtra")
+library(rgeeExtra)
+library(raster)
+# Instalar rtools---------------------------------------------------------
+# rtools
+# Sys.which("make")
+# Paquete de rgee
+#ee_install()
+
+# Nos pedira si queremos instalar miniconda dareos Y
+# Creara un nuevo entorn Python
+# Nos pedira reiniciar la consola daremos 1
+# Instalar rtools---------------------------------------------------------
+# Iniciamos nuestra cuenta de Rgee
+ee_Initialize("gflorezc", drive = T)
+# ee_install()
+dem <- ee$Image("CGIAR/SRTM90_V4")
+viz <- list(min=100, max= 4500, palette= cpt(pal = "gmt_GMT_dem1", n=10))
+
+slope <- ee$Terrain$slope(dem)
+hillshape  <- ee$Terrain$hillshade(dem)
+```
+Google Earth Engine Entrenamiento sobre Visualización (DEM) de Hill Shade y Mapa de la pendiente
+===================================== 
+
+Column {data-width=550}
+-----------------------------------------------------------------------
+
+### Mapa Digital Elevation Model
+```{r}
+Map$setCenter(-74.8773, -11.54012,3) 
+Map$addLayer(eeObject = dem, visParams = viz, legend = T)
+```
+ 
+Column {data-width=450}
+-----------------------------------------------------------------------
+### Mapa pendiente
+
+```{r map}
+Map$setCenter(-74.8773, -11.54012,3) 
+Map$addLayer(eeObject = slope, visParams = list(min=0.2, max=0.75))
+```
+
+Column {data-width=450}
+-----------------------------------------------------------------------
+### Mapa sombras
+
+```{r map2}
+Map$setCenter(-74.8773, -11.54012,3) 
+Map$addLayer(eeObject = hillshape, visParams = NULL)
+
+```
+
+
+
+
+
+
